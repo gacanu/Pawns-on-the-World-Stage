@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Todo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Todo</font>
+</center></td></tr></table>
+<pre><span class="s0">Model:</span>
+<span class="s0">-</span>
+<span class="s0">- Card (Max 2 Dupes)</span>
+   <span class="s0">- Name, cost, value score, 5x5 board of influence (boolean[][])</span>
+<span class="s0">- Board[][] (of Cells is a Rectangle)</span>
+    <span class="s0">- fields: cell[][], bool started, card[] deckA, card[] deckB, player turn, int scoreA, int scoreB,</span>
+    <span class="s0">- enum player (color)</span>
+    <span class="s0">- getNewDeck(random r)</span>
+    <span class="s0">- constructor(col, row) - column must be odd :-D</span>
+    <span class="s0">- placeCard() - places card if enough pawns, places pawns around it per influence</span>
+    <span class="s0">- private - addPawn()</span>
+    <span class="s0">- getCell()</span>
+    <span class="s0">- startGame(deckA, deckB, handSize) - handSize can't be greater than 1/3 of deck size</span>
+    <span class="s0">- private - makeHand()</span>
+
+<span class="s0">- Cell (tile on the board)</span>
+    <span class="s0">- placeCard()</span>
+    <span class="s0">- addPawns(posn)</span>
+    <span class="s0">- getPawns()</span>
+    <span class="s0">- getCard()</span>
+    <span class="s0">- Can contain pawns, cards or nothing</span>
+    <span class="s0">- OneOf Card or Pawn</span>
+
+<span class="s0">- Pawn (Number of)</span>
+
+<span class="s0">View:</span>
+<span class="s0">TextualView:</span>
+    <span class="s0">- toString()</span>
+    <span class="s0">- render(appendable)</span>
+    <span class="s0">-</span></pre>
+</body>
+</html>
