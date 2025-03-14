@@ -51,11 +51,19 @@ public class DeckReader {
           throw new IllegalArgumentException("Incorrect config syntax in " + arr.toString());
         }
         name = arr[0];
-        cost = Integer.valueOf(arr[1]);
-        value = Integer.valueOf(arr[2]);
+        try {
+          cost = Integer.valueOf(arr[1]);
+          value = Integer.valueOf(arr[2]);
+          if(cost < 0 || value < 0) {
+            throw new IllegalArgumentException("Cost and value cannot be negative!");
+          }
+        }
+        catch(NumberFormatException e) {
+          throw new IllegalArgumentException("Incorrect config syntax. Cost and value must be a number!");
+        }
       }
       else { //Lines of X's and I's
-        newInf[rem - 1] = toBoolArray(arrayDeck[i]);
+        newInf[rem - 1] = toBoolArray(arrayDeck[i], aff);
         if(rem == 5) { //last line of x's
           soln.add(new Card(name, cost, value, newInf, aff)); //finally, adding the card.
           name = "";
@@ -71,15 +79,25 @@ public class DeckReader {
   //Converts a string like 'XXIIX' into an array; for this example, it would output
   //{false, false, true, true, false}
   //'C' slots are treated like 'X' slots.
-  private static Boolean[] toBoolArray(String s) {
+  private static Boolean[] toBoolArray(String s, Player p) {
     Boolean[] soln = new Boolean[5];
     char[] a = s.toCharArray();
-    for(int i = 0; i < 5; i++) {
-      if(a[i] == 'I') {
-        soln[i] = true;
+    if (p == Player.PLAYER1) {
+      for (int i = 0; i < 5; i++) {
+        if (a[i] == 'I') {
+          soln[i] = true;
+        } else {
+          soln[i] = false; //In the case of 'X' or 'C'
+        }
       }
-      else {
-        soln[i] = false; //In the case of 'X' or 'C'
+    }
+    else {
+      for (int i = 4; i >= 0; i--) {
+        if (a[i] == 'I') {
+          soln[i] = true;
+        } else {
+          soln[i] = false; //In the case of 'X' or 'C'
+        }
       }
     }
     return soln;

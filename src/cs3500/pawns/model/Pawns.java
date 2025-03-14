@@ -25,6 +25,10 @@ public class Pawns implements Cell {
     this.player = player;
   }
 
+  /**
+   * Returns the affiliation of this Cell.
+   * @return the affiliation of this Cell.
+   */
   @Override
   public Player getAffiliation() {
     return this.player;

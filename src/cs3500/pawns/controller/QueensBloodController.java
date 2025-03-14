@@ -1,9 +1,8 @@
 package cs3500.pawns.controller;
 
 import cs3500.pawns.model.Cell;
-import cs3500.pawns.model.Game;
 import cs3500.pawns.model.QueensBlood;
-import cs3500.pawns.view.QueensBloodTextualView;
+import cs3500.pawns.view.QueensBloodView;
 
 /**
  * Driver of the Queens Blood game. Reads user input to determine what move
@@ -22,6 +21,6 @@ public interface QueensBloodController {
    *                                  transmit output, or if the game cannot be started
    * @throws IllegalArgumentException if the model or view are null
    */
-  <C extends Cell> void playGame(QueensBlood model, QueensBloodTextualView view,
+  <C extends Cell> void playGame(QueensBlood model, QueensBloodView view,
                                  boolean shuffle, int handSize);
 }

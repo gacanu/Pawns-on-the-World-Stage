@@ -4,14 +4,11 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 import cs3500.pawns.controller.QueensBloodTextualController;
-import cs3500.pawns.model.Card;
-import cs3500.pawns.model.Game;
+import cs3500.pawns.model.DeckReader;
 import cs3500.pawns.model.Player;
 import cs3500.pawns.model.QueensBlood;
-import cs3500.pawns.view.QueensBloodTextualView;
 import cs3500.pawns.view.QueensBloodView;
-
-import static cs3500.pawns.model.DeckReader.readFile;
+import cs3500.pawns.view.QueensBloodTextualView;
 
 /**
  * allows the QueensBlood game to be played.
@@ -24,11 +21,12 @@ public class PawnsBoard {
   public static void main(String[] args) {
     Readable in = new InputStreamReader(System.in);
     Appendable out = System.out;
-    QueensBlood model = new QueensBlood(3, 5, new Random());
-    QueensBloodTextualView view = new QueensBloodView(model);
+    QueensBlood model = new QueensBlood(5, 3, new Random());
+    model.startGame(DeckReader.readFile(Player.PLAYER1), DeckReader.readFile(Player.PLAYER2), 2, false);
+    QueensBloodView view = new QueensBloodTextualView(model);
     QueensBloodTextualController controller = new QueensBloodTextualController(in, out);
     controller.playGame(model, view, true, 5);
     // must edit playGame inputs to match needed for QueensBlood.
+    System.out.println(view.toString());
   }
-
 }

@@ -23,6 +23,8 @@ public class QueensBlood {
   private Player turn;
   private boolean gameOver;
   private int skipped; //Increments up by one when a player passes their turn, and resets otherwise
+  private final int width;
+  private final int height;
   //Tells the game when to end
 
   /**
@@ -68,12 +70,22 @@ public class QueensBlood {
     this.started = false;
     this.gameOver = false;
     this.skipped = 0;
+    this.width = width;
+    this.height = height;
 
     // sets both player's scores to zero
     for (int k = height - 1; k >= 0; k--) {
       this.score1[k] = 0;
       this.score2[k] = 0;
     }
+  }
+
+  public int getWidth() {
+    return this.width;
+  }
+
+  public int getHeight() {
+    return this.height;
   }
 
   /**
@@ -127,11 +139,11 @@ public class QueensBlood {
     if (deck2.size() < getEmptySpots()) {
       throw new IllegalArgumentException("Deck 2 does not have enough cards to fill the board!");
     }
-    if (handSize < (deck1.size() / 3)) {
-      throw new IllegalArgumentException("Hand size cannot be less than a third of the size of either deck - deck 1 is too small.");
+    if (handSize > (deck1.size() / 3)) {
+      throw new IllegalArgumentException("Hand size cannot be greater than a third of the size of either deck - deck 1 is too small.");
     }
-    if (handSize < (deck2.size() / 3)) {
-      throw new IllegalArgumentException("Hand size cannot be less than a third of the size of either deck - deck 2 is too small.");
+    if (handSize > (deck2.size() / 3)) {
+      throw new IllegalArgumentException("Hand size cannot be greater than a third of the size of either deck - deck 2 is too small.");
     }
     if (checkTriplicates(deck1)) {
       throw new IllegalArgumentException("Deck 1 has triplicates! That's not allowed!");
@@ -221,6 +233,24 @@ public class QueensBlood {
       this.turn = Player.PLAYER1;
     }
   }
+
+  private void updateScores() {
+    for(int i = 0; i < this.height; i++) {
+      int val1 = 0;
+      int val2 = 0;
+      for(Cell[] a : board) {
+        if(a[i].getAffiliation() == Player.PLAYER1) {
+          val1 += a[i].getValue();
+        }
+        else {
+          val2 += a[i].getValue();
+        }
+      }
+      score1[i] = val1;
+      score2[i] = val2;
+    }
+  }
+
 
   /**
    * Places pawns around the placed card per it's area of influence.
