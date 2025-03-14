@@ -1,6 +1,7 @@
 package cs3500.pawns.model;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A card representing a unit in a game of Queen's Blood.
@@ -53,14 +54,13 @@ public class Card implements Cell {
   }
 
   /**
-   * converts to a String format.
+   * converts to a String format. Goes into text menus.
    *
    * @return the players color as a string.
    */
   @Override
   public String toString() {
-    return this.name + "!" + this.cost + "!" + this.value + "!"
-            + Arrays.deepToString(this.influence) + "!" + this.player.getColor();
+    return this.name + ", C: " + this.cost + ", V: " + this.value;
   }
 
   /**
@@ -139,5 +139,17 @@ public class Card implements Cell {
    */
   public Player getAffiliation() {
     return this.player;
+  }
+
+  public boolean equals(Object o) {
+    if(!(o instanceof Card)) {
+      return false;
+    }
+    Card other = (Card) o;
+    return this.influence == other.getInfluence()
+            && Objects.equals(this.name, other.getName())
+            && this.value == other.getValue()
+            && this.cost == other.getCost()
+            && this.player == other.getAffiliation();
   }
 }

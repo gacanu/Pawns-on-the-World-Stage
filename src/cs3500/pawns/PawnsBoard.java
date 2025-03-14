@@ -6,9 +6,12 @@ import java.util.Random;
 import cs3500.pawns.controller.QueensBloodTextualController;
 import cs3500.pawns.model.Card;
 import cs3500.pawns.model.Game;
+import cs3500.pawns.model.Player;
 import cs3500.pawns.model.QueensBlood;
 import cs3500.pawns.view.QueensBloodTextualView;
 import cs3500.pawns.view.QueensBloodView;
+
+import static cs3500.pawns.model.DeckReader.readFile;
 
 /**
  * allows the QueensBlood game to be played.
@@ -27,4 +30,5 @@ public class PawnsBoard {
     controller.playGame(model, view, true, 5);
     // must edit playGame inputs to match needed for QueensBlood.
   }
+
 }

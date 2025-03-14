@@ -2,7 +2,9 @@ package cs3500.pawns.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -12,8 +14,8 @@ public class QueensBlood {
   private final Cell[][] board;
   private List<Card> deck1; // player 1's deck
   private List<Card> deck2; // player 2's deck
-  private List<Card> hand1; // player 1's deck
-  private List<Card> hand2; // player 2's deck
+  private List<Card> hand1; // player 1's hand
+  private List<Card> hand2; // player 2's hand
   private int[] score1; // player 1's top-to-bottom list of scores.
   private int[] score2; // player 2's top-to-bottom list of scores.
   private boolean started;
@@ -125,16 +127,46 @@ public class QueensBlood {
     if (deck2.size() < getEmptySpots()) {
       throw new IllegalArgumentException("Deck 2 does not have enough cards to fill the board!");
     }
-    //TODO: check if either deck contains triplicates
+    if (handSize < (deck1.size() / 3)) {
+      throw new IllegalArgumentException("Hand size cannot be less than a third of the size of either deck - deck 1 is too small.");
+    }
+    if (handSize < (deck2.size() / 3)) {
+      throw new IllegalArgumentException("Hand size cannot be less than a third of the size of either deck - deck 2 is too small.");
+    }
+    if (checkTriplicates(deck1)) {
+      throw new IllegalArgumentException("Deck 1 has triplicates! That's not allowed!");
+    }
+    if (checkTriplicates(deck2)) {
+      throw new IllegalArgumentException("Deck 2 has triplicates! That's not allowed!");
+    }
     this.started = true;
     this.deck1 = deck1;
     this.deck2 = deck2;
     if(shuffle) {
       Collections.shuffle(this.deck1, this.random); //Should both decks shuffle the same way?
       Collections.shuffle(this.deck2, this.random); //As in should two identical decks get shuffled exactly the same
-    }
+    }                                               //probably not >_>
     this.hand1 = new ArrayList<>();
     this.hand2 = new ArrayList<>();
+    for(int i = 0; i < handSize; i++) {
+      this.hand1.add(this.deck1.remove(0)); //Populating each hand with cards from each deck
+      this.hand2.add(this.deck2.remove(0));
+    }
+  }
+
+  private boolean checkTriplicates(List<Card> deck) {
+    Map<Card, Integer> amts = new HashMap<>();
+    for(Card c : deck) {
+      int num = 0;
+      if(amts.get(c) != null) {
+         num = amts.get(c); //how many of this item exist in the deck so far?
+      }
+      if(num == 2) {
+        return true; //There are 3 of this item
+      }
+      amts.put(c, num + 1); //We've got that item, increment the count by one
+    }
+    return false;
   }
 
   // This is probably how this should be setup
@@ -277,13 +309,40 @@ public class QueensBlood {
     if(!this.started) {
       throw new IllegalStateException("The game hasn't started yet!");
     }
+    if(player == null) {
+      throw new IllegalArgumentException("Given player cannot be null!");
+    }
     if(player == Player.PLAYER1) {
       return new ArrayList<>(this.hand1);
     }
     return new ArrayList<>(this.hand2);
   }
 
+  /**
+   * Returns the array of scores for a given player.
+   * @param player whose scores to return.
+   * @return that player's scores.
+   */
+  public int[] getScores(Player player) {
+    if(!this.started) {
+      throw new IllegalStateException("The game hasn't started yet!");
+    }
+    if(player == null) {
+      throw new IllegalArgumentException("Given player cannot be null!");
+    }
+    if(player == Player.PLAYER1) {
+      return this.score1;
+    }
+    return this.score2;
+  }
 
+  /**
+   * Return what turn it is.
+   * @return whose turn it is.
+   */
+  public Player getTurn() {
+    return this.turn;
+  }
 
 }
 

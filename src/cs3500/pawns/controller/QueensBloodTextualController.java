@@ -4,8 +4,11 @@ import java.util.Scanner;
 
 import cs3500.pawns.model.Cell;
 import cs3500.pawns.model.Game;
+import cs3500.pawns.model.Player;
 import cs3500.pawns.model.QueensBlood;
 import cs3500.pawns.view.QueensBloodTextualView;
+
+import static cs3500.pawns.model.DeckReader.readFile;
 
 /**
  * implementation of the driver of the Queens Blood game. Reads user input to determine what move
@@ -47,8 +50,12 @@ public class QueensBloodTextualController implements QueensBloodController {
   @Override
   public <C extends Cell> void playGame(QueensBlood model, QueensBloodTextualView view, boolean shuffle,
                                         int handSize) {
-
-
+    model.startGame(readFile(Player.PLAYER1), readFile(Player.PLAYER2), handSize, shuffle);
+    //TODO: We need to set up more controller methods if we want to use this for testing; this isn't required for submission but will probably help
+    // PrintGame()
+    //  Remember to list each player's hand, maybe depending on the turn.
+    // HandleInput() - Command pattern shouldn't be that hard; we don't need to debug this super hard just make it good enough to play a game
+    //  Commands: Place x y z, Pass, Quit
   }
 
 

@@ -38,4 +38,11 @@ public class QueensBloodView implements QueensBloodTextualView {
   public void render(Appendable out) throws IOException {
     out.append(this.toString());
   }
+
+  @Override
+  public String toString() {
+    //TODO: Get this working
+    // Use toString() for cards in hand, vString() for Cells on the board
+    return "";
+  }
 }
