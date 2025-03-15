@@ -1,0 +1,28 @@
+These things *must* be tested first (they're specifically mentioned in the specification)
+Things marked as fix me need to be fixed in the implementation!
+QueensBlood:
+- Disallowing triplicates in a deck
+- Check that the board construction has positive x and y, and that x is odd
+- FIXME: Check that cards are not drawn when no cards are left in the deck
+- Check that cards' influence affects the board
+- Check that passes swap turns without doing anything
+- Check that cells have enough pawns to place the card
+        - NOTE: This is in the game, but it doesn't throw an error or anything. Fix that..?
+- Check that the game ends when two players pass in a row
+- Check that the score updates properly
+- Check that the totalScore is counted properly, ties included
+Cards:
+- Check that card construction does not allow for greater than 3 cost or value
+- Check that two cards are the same (via specs)
+- Check that applying influence on a card does nothing
+Cells:
+- Check that cells change ownership when pawns are placed in them
+Pawns:
+- Check that applying influence on an empty space changes that player and pawn count
+- Check that pawn count maxes out at 3
+- FIXME: Check that pawns change ownership if a pawn of a different player is added
+DeckReader:
+- Check that cards are 'mirrored' per influence
+- Check that the 'C' appears in the middle - it cannot appear anywhere else
+
+

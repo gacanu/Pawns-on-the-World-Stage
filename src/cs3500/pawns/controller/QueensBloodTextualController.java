@@ -19,6 +19,7 @@ public class QueensBloodTextualController implements QueensBloodController {
   private final Appendable ap;
   private Scanner scan;
   private boolean q;
+  private boolean p;
 
   /**
    * constructor for QueensBloodTextualController.
@@ -33,6 +34,7 @@ public class QueensBloodTextualController implements QueensBloodController {
 
     this.ap = ap;
     this.q = false;
+    this.p = false;
     this.scan = new Scanner(rd);
   }
 
@@ -58,15 +60,10 @@ public class QueensBloodTextualController implements QueensBloodController {
     try {
       model.startGame(readFile(Player.PLAYER1), readFile(Player.PLAYER2), handSize, shuffle);
 
-      while (!model.isGameOver() && !q) {
+      while (model.isGameOver() && !q) {
         view.render(ap);
         ap.append("\nGame over\n");
         input(model);
-      }
-
-      if (model.isGameOver()) {
-        view.render(ap);
-        ap.append("\nGame over\n");
       }
 
       if (q) {
@@ -76,19 +73,20 @@ public class QueensBloodTextualController implements QueensBloodController {
     }
 
     //Break up
-    catch (IOException | IllegalStateException | IllegalArgumentException e) {
+    catch (IOException e) {
       throw new IllegalStateException("the controller is unable to successfully receive input, "
-              + "transmit output, or if the game cannot be started");
+              + "transmit output, or the game cannot be started");
     }
 
 
-    //TODO: We need to set up more controller methods if we want to use this for testing; this isn't required for submission but will probably help
+    //TODO: We need to set up more controller methods if we want to use this for testing;
+    // this isn't required for submission but will probably help
     // PrintGame()
     //  Remember to list each player's hand, maybe depending on the turn.
-    // HandleInput() - Command pattern shouldn't be that bad; we don't need to debug this super hard, just make it good enough to play a game
+    // HandleInput() - Command pattern shouldn't be that bad; we don't need to debug this
+    // super hard, just make it good enough to play a game
     //  Commands: Place x y z, Pass, Quit
   }
-
   private <C extends Cell> void input(QueensBlood model) throws IOException {
     try {
       if (scan.hasNext()) {
@@ -101,6 +99,9 @@ public class QueensBloodTextualController implements QueensBloodController {
           case "Q":
           case "q":
             q = true;
+            return;
+          case "pass" :
+            p = true;
             return;
           default:
             ap.append("\nInvalid move. Play again. \n");
@@ -139,9 +140,6 @@ public class QueensBloodTextualController implements QueensBloodController {
 
 
 
-
-
-
 // Noelle you're actually so huge for this i hate controllers
   // have this as recompense
   //
@@ -157,7 +155,5 @@ public class QueensBloodTextualController implements QueensBloodController {
   //                                             //// ///////
   //                                             //// \\\\\\\ thumbs up B)
   //                                             //// ///////
-
-
 
 }

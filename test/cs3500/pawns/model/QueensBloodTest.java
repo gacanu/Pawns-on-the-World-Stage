@@ -4,11 +4,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 public class QueensBloodTest {
 
     @Before
     public void setUp() throws Exception {
+
+    }
+
+    @Test
+    public void getWidth() {
+    }
+
+    @Test
+    public void getHeight() {
     }
 
     @Test
@@ -45,5 +53,9 @@ public class QueensBloodTest {
 
     @Test
     public void getTurn() {
+    }
+
+    @Test
+    public void getTotalScore() {
     }
 }

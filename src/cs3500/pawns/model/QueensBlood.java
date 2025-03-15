@@ -123,9 +123,9 @@ public class QueensBlood {
    * @param deck2 player 2's deck.
    */
   public void startGame(List<Card> deck1, List<Card> deck2, int handSize, Boolean shuffle) {
-    if(this.started) {
-      throw new IllegalStateException("You've already started this game!");
-    }
+    //if(this.started) {
+    //  throw new IllegalStateException("You've already started this game!");
+    //}
     if (deck1 == null || deck2 == null || deck1.isEmpty() || deck2.isEmpty()) {
       throw new IllegalArgumentException("Decks can't be null or empty!");
     }
@@ -171,7 +171,7 @@ public class QueensBlood {
     for(Card c : deck) {
       int num = 0;
       if(amts.get(c) != null) {
-         num = amts.get(c); //how many of this item exist in the deck so far?
+        num = amts.get(c); //how many of this item exist in the deck so far?
       }
       if(num == 2) {
         return true; //There are 3 of this item
@@ -327,6 +327,7 @@ public class QueensBlood {
     if (!this.started) {
       throw new IllegalArgumentException("The game hasn't even started yet!");
     }
+
     return this.gameOver;
   }
 
@@ -374,16 +375,32 @@ public class QueensBlood {
     return this.turn;
   }
 
+  /**
+   * Get the total score. For each row, scores are only counted if they are greater than the opponent's score on that same row.
+   * @param player whose score to return.
+   * @return that player's total score.
+   */
+  public int getTotalScore(Player player) {
+    if(!this.started) {
+      throw new IllegalStateException("The game hasn't started yet!");
+    }
+    if(player == null) {
+      throw new IllegalArgumentException("Player can't be null!");
+    }
+    int sc1 = 0;
+    int sc2 = 0;
+    for(int i = 0; i < this.height; i++) {
+      if(score1[i] > score2[i]) {
+        sc1 += score1[i];
+      }
+      if(score1[i] < score2[i]) {
+        sc2 += score2[i];
+      }
+      //When neither win, neither are counted.
+    }
+    if(player == Player.PLAYER1) {
+      return sc1;
+    }
+    return sc2;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
