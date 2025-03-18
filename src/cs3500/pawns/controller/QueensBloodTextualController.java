@@ -1,6 +1,9 @@
 package cs3500.pawns.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -41,45 +44,69 @@ public class QueensBloodTextualController implements QueensBloodController {
   /**
    * Starts and plays the game using user input from the player.
    *
-   * @param model    state of the game
-   * @param view     view for the model
-   * @param shuffle  true iff the deck should be shuffled.
+   * @param model state of the game
+   * @param view view for the model
+   * @param shuffle true iff the deck should be shuffled.
    * @param handSize the starting hand size
-   * @throws IllegalStateException    if controller is unable to successfully receive input,
-   *                                  transmit output, or if the game cannot be started
+   * @throws IllegalStateException if controller is unable to successfully receive input, transmit
+   *     output, or if the game cannot be started
    * @throws IllegalArgumentException if the model or view are null
    */
   @Override
-  public <C extends Cell> void playGame(QueensBlood model, QueensBloodView view, boolean shuffle,
-                                        int handSize) {
+  public <C extends Cell> void playGame(
+      QueensBlood model, QueensBloodView view, boolean shuffle, int handSize) {
 
     if (model == null || view == null) {
       throw new IllegalArgumentException("Model and view cannot be null!");
     }
 
     try {
-      model.startGame(readFile(Player.PLAYER1), readFile(Player.PLAYER2), handSize, shuffle);
+      Path path = Paths.get("docs" + File.separator + "deck.config");
+      model.startGame(
+          readFile(Player.PLAYER1, path), readFile(Player.PLAYER2, path), handSize, shuffle);
 
-      while (model.isGameOver() && !q) {
+      while (!model.isGameOver() && !q) {
         view.render(ap);
-        ap.append("\nGame over\n");
+        ap.append("\n");
+        ap.append(
+            "Score: "
+                + model.getTotalScore(Player.PLAYER1)
+                + model.getTotalScore(Player.PLAYER2)
+                + "\n");
         input(model);
       }
 
-      if (q) {
+      if (model.isGameOver()) {
         view.render(ap);
-        ap.append("\nGame quit!");
+        ap.append("\n");
+        ap.append(
+            "\nGame over. Score: "
+                + model.getTotalScore(Player.PLAYER1)
+                + model.getTotalScore(Player.PLAYER2)
+                + "\n");
+      }
+
+      if (q) {
+        ap.append("Game quit!\n");
+        ap.append("State of game when quit:\n");
+        view.render(ap);
+        ap.append("\n");
+        ap.append(
+            "Score: "
+                + model.getTotalScore(Player.PLAYER1)
+                + model.getTotalScore(Player.PLAYER2)
+                + "\n");
       }
     }
 
-    //Break up
+    // Break up
     catch (IOException e) {
-      throw new IllegalStateException("the controller is unable to successfully receive input, "
+      throw new IllegalStateException(
+          "the controller is unable to successfully receive input, "
               + "transmit output, or the game cannot be started");
     }
 
-
-    //TODO: We need to set up more controller methods if we want to use this for testing;
+    // TODO: We need to set up more controller methods if we want to use this for testing;
     // this isn't required for submission but will probably help
     // PrintGame()
     //  Remember to list each player's hand, maybe depending on the turn.
@@ -87,20 +114,20 @@ public class QueensBloodTextualController implements QueensBloodController {
     // super hard, just make it good enough to play a game
     //  Commands: Place x y z, Pass, Quit
   }
+
   private <C extends Cell> void input(QueensBlood model) throws IOException {
     try {
       if (scan.hasNext()) {
         String cmd = scan.next();
         switch (cmd) {
           case "place":
-            model.placeCardInPosition(this.readInt() - 1, this.readInt() - 1,
-                    this.readInt() - 1);
+            model.placeCardInPosition(this.readInt() - 1, this.readInt() - 1, this.readInt() - 1);
             return;
           case "Q":
           case "q":
             q = true;
             return;
-          case "pass" :
+          case "pass":
             p = true;
             return;
           default:
@@ -116,9 +143,10 @@ public class QueensBloodTextualController implements QueensBloodController {
 
   /**
    * reads the next value to grab the next int.
-   * @param <C>   extents the cell class
-   * @return      the next integer value
-   * @throws QuitException      quit exception
+   *
+   * @param <C> extents the cell class
+   * @return the next integer value
+   * @throws QuitException quit exception
    */
   private <C extends Cell> int readInt() throws QuitException {
     while (true) {
@@ -137,23 +165,4 @@ public class QueensBloodTextualController implements QueensBloodController {
       }
     }
   }
-
-
-
-// Noelle you're actually so huge for this i hate controllers
-  // have this as recompense
-  //
-  //      //////////////////////////////////////    ________________________
-  //    /////       ///////////      ///////////   /                        \
-  //                ///////////      ///////////  |  never give up big dog   |
-  //                 ////////         /////////    \ _______________________/
-  //
-  //                   /////////////////////       ////
-  //                     ////////////////         /////
-  //                         /////////           //// ///////
-  //                                             //// \\\\\\\
-  //                                             //// ///////
-  //                                             //// \\\\\\\ thumbs up B)
-  //                                             //// ///////
-
 }

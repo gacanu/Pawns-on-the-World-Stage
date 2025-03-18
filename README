@@ -1,0 +1,78 @@
+Overview
+- Cell
+    - Interface that represents an element on the board.
+    - This element can have a value, cost, and affiliation, and can have pawns/cards placed on them.
+    - Cards and Pawns are both Cell types.
+- Card
+    - Represents a Card with a name, cost, value, influence grid, and Player affiliation.
+    - Can act as both a member of a deck as a Card, or an element of the game board as a Cell.
+    KEY COMPONENT:
+    - Influence: A 5x5 2D boolean array, representing the cloud of influence around this card.
+- Pawns
+    - Represents a certain number of pawns with a Player affiliation on the board.
+    - Blank board spaces are not null, but instead a Pawn with a null affiliation and zero pawns.
+- Player
+    - One of PLAYER1 or PLAYER2. PLAYER1 has the color value red, while PLAYER2 has the color value blue.
+    - In cells, this represents the person who placed the card or who controls the given group of pawns.
+    - In QueensBlood, this is used to represent which player's turn it currently is.
+    - In DeckReader, this is used to assign the read cards to the given player.
+- DeckReader
+    - A class with one static method, readFile(), that reads a deck from the given file path and returns the deck.
+    - By default, playing a game with a normal controller should load the deck.config file currently in 'docs/deck.config'.
+    - The affiliation of the cards in the returned deck depends on the player given in the method declaration.
+- QueensBlood
+    - Represents a game of QueensBlood.
+    - Swaps between two players and has a whole host of methods that facilitate placing cards, passing, etc.
+    KEY COMPONENTS:
+    - deck1 and deck2: The decks for both players. Is a list of Cards.
+    - hand1 and hand2: The hands for both players. Is a list of Cards.
+    - turn: Which turn it is; changes which deck and hand placeCardInPosition() accesses.
+    - board: A 2D array containing Cells. Represents the board of the game.
+- QueensBloodTextualView
+    - Represents a game of QueensBlood textually.
+    - Follows the format outlined on the assignment; i.e. looks something like this:
+    1 R1_1B 1
+    2 R1_1B 2
+    2 R_1_2 0
+    - Where 'R' and 'B' are placed cards, numbers on the board are pawns, and '_' are empty spots.
+    - The numbers on the side represent each player's scores.
+- QueensBloodTextualController
+    - A basic textual controller, used for testing. Can play and pass.
+
+Example 1 2 (line 1)
+XXXXX
+XXIXX
+XICIX
+XXIXX
+XXXXX (line 6)
+DeckReader Error Throwing
+DeckReader will throw an IllegalStateException if:
+- It cannot find the file at the given path.
+- It cannot read the file for whatever reason (I/O).
+DeckReader will throw an IllegalArgumentException if:
+- Too many/few arguments are given for line 1.
+- Arguments 2 and 3 on line 1 are not integers.
+- Any line from 2 - 6 is not 5 characters long.
+- Any character on line 2-6 is not 'X', 'I', or 'C'.
+- 'C' is not found in the middle - line 4, character 3.
+- 'C' is found somewhere other than the middle.
+- Syntax is otherwise correct, but fails to create a valid Card in the model.
+
+
+Instantiating user-players
+User-Players would likely be an interface similar to a controller, with methods like Place() and
+Pass(), alongside methods that allow the player to see the view, also with some event listeners in
+the Computer Controlled Player that force it to take a turn (for example). So, the structure
+would probably something similar to this:
+
+ - Player (Interface)
+     - UserPlayer (Class - represents a person playing)
+     - CPUPlayer (Class - represents a computer playing)
+
+The Computer Controlled Player would likely be designed so that it has a list of priorities, which
+check in a row and perform some function if a condition is met. It would probably look something
+like this:
+- Try to place the highest value card the furthest forward on the board. If it is one cheaper than
+        the current spot, try to find another eligible one.
+- If no spots are eligible, try the next highest value card in the hand.
+- If nothing can be placed, pass the turn.

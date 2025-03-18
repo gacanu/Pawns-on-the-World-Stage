@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * A card representing a unit in a game of Queen's Blood.
- * Cards can be represented both on the deck and on the board, so keep that in mind.
+ * A card representing a unit in a game of Queen's Blood. Cards can be represented both on the deck
+ * and on the board, so keep that in mind.
  */
 public class Card implements Cell {
   private final String name;
@@ -17,19 +17,20 @@ public class Card implements Cell {
   /**
    * to represent the Card constructor.
    *
-   * @param name      the name of this card.
-   * @param cost      the cost of this card.
-   * @param value     the value at this position.
+   * @param name the name of this card.
+   * @param cost the cost of this card.
+   * @param value the value at this position.
    * @param influence the influence of this card.
-   * @param player    the player who owns this card.
+   * @param player the player who owns this card.
    */
   public Card(String name, int cost, int value, Boolean[][] influence, Player player) {
     if (name.isEmpty() || name == null) {
       throw new IllegalArgumentException("Name cannot be empty or null!");
     }
 
-    if (cost <= 0 || value <= 0) {
-      throw new IllegalArgumentException("Cost and value must be at least 1!");
+    if (cost <= 0 || value <= 0 || cost > 3 || value > 3) {
+      throw new IllegalArgumentException(
+          "Cost and value must be at least 1, and no greater than 3!");
     }
 
     if (influence == null) {
@@ -43,6 +44,14 @@ public class Card implements Cell {
     for (Boolean[] a : influence) {
       if (a.length != 5) {
         throw new IllegalArgumentException("Influence must be a 5x5 boolean array!");
+      }
+    }
+
+    for (Boolean[] b : influence) {
+      for (Boolean c : b) {
+        if (c == null) {
+          throw new IllegalArgumentException("No member of the influence grid can be null!");
+        }
       }
     }
 
@@ -60,7 +69,13 @@ public class Card implements Cell {
    */
   @Override
   public String toString() {
-    return this.name + ", C: " + this.cost + ", V: " + this.value;
+    return this.name
+        + ", C: "
+        + this.cost
+        + ", V: "
+        + this.value
+        + ", Inf: "
+        + Arrays.deepToString(this.influence);
   }
 
   /**
@@ -70,12 +85,11 @@ public class Card implements Cell {
    */
   @Override
   public String vString() {
-    return player.getColor();
+    return player.getColor().substring(0, 1);
   }
 
   /**
-   * Returns the amount of pawns in this position.
-   * Cards return -1, as they have no pawns.
+   * Returns the amount of pawns in this position. Cards return -1, as they have no pawns.
    *
    * @return the amt of pawns in this position.
    */
@@ -91,13 +105,12 @@ public class Card implements Cell {
    */
   @Override
   public void addPawn(Player player) {
-    //throw new IllegalArgumentException("This is a card, there are no pawns here!");
-    //Change this later, maybe.
+    // throw new IllegalArgumentException("This is a card, there are no pawns here!");
+    // Change this later, maybe.
   }
 
   /**
-   * Returns the value at this position.
-   * Pawns have no value and return 0.
+   * Returns the value at this position. Pawns have no value and return 0.
    *
    * @return the value at this position.
    */
@@ -135,21 +148,38 @@ public class Card implements Cell {
 
   /**
    * Return the affiliation of this card.
+   *
    * @return the affiliation of this card.
    */
   public Player getAffiliation() {
     return this.player;
   }
 
+  /**
+   * Checks if the given object is equal to this card.
+   *
+   * @param o to represent an object
+   * @return if this given object is equal to this card
+   */
   public boolean equals(Object o) {
-    if(!(o instanceof Card)) {
+    if (!(o instanceof Card)) {
       return false;
     }
     Card other = (Card) o;
-    return this.influence == other.getInfluence()
-            && Objects.equals(this.name, other.getName())
-            && this.value == other.getValue()
-            && this.cost == other.getCost()
-            && this.player == other.getAffiliation();
+    return Arrays.deepEquals(this.influence, other.getInfluence())
+        && Objects.equals(this.name, other.getName())
+        && this.value == other.getValue()
+        && this.cost == other.getCost()
+        && this.player == other.getAffiliation();
+  }
+
+  /**
+   * the hash code of the given card.
+   *
+   * @return the hash code of the given card
+   */
+  public int hashCode() {
+    return Objects.hash(
+        this.name, this.cost, this.value, Arrays.deepHashCode(this.influence), this.player);
   }
 }

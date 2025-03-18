@@ -1,10 +1,9 @@
 package cs3500.pawns.model;
 
-/**
- * this enum represents player1 and player2 and their corresponding color.
- */
+/** this enum represents player1 and player2 and their corresponding color. */
 public enum Player {
-  PLAYER1("Red"), PLAYER2("Blue");
+  PLAYER1("Red"),
+  PLAYER2("Blue");
   private final String color;
 
   /**

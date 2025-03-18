@@ -2,14 +2,11 @@ package cs3500.pawns.view;
 
 import java.io.IOException;
 
-/**
- * Interface for a view for the Queens Blood game.
- */
+/** Interface for a view for the Queens Blood game. */
 public interface QueensBloodView {
 
   /**
-   * Renders a model in some manner (e.g. as text, or as graphics, etc.)
-   * to the given appendable.
+   * Renders a model in some manner (e.g. as text, or as graphics, etc.) to the given appendable.
    *
    * @param out where to send the model information to
    * @throws IOException if the rendering fails for some reason
