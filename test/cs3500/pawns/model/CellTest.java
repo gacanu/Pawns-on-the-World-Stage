@@ -10,16 +10,16 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-/** Tests for methods on the Interface Cell. Encompasses both Card and Pawns. */
+/** Tests for methods on the Interface Cell. Encompasses both Unit and Pawns. */
 public class CellTest {
   Random testRand = new Random(1);
   Boolean[][] cavalryGrid = generateGrid(testRand);
-  Cell card1 = new Card("Cavalry", 1, 1, cavalryGrid.clone(), Player.PLAYER1);
-  Cell card2 = new Card("Cavalry", 1, 1, cavalryGrid.clone(), Player.PLAYER1);
+  Cell card1 = new Unit("Cavalry", 1, 1, cavalryGrid.clone(), Turn.PLAYER1);
+  Cell card2 = new Unit("Cavalry", 1, 1, cavalryGrid.clone(), Turn.PLAYER1);
   Cell emptySpace = new Pawns();
-  Cell onePawn = new Pawns(1, Player.PLAYER1);
-  Cell twoPawn = new Pawns(2, Player.PLAYER2);
-  Cell threePawn = new Pawns(3, Player.PLAYER1);
+  Cell onePawn = new Pawns(1, Turn.PLAYER1);
+  Cell twoPawn = new Pawns(2, Turn.PLAYER2);
+  Cell threePawn = new Pawns(3, Turn.PLAYER1);
 
   private Boolean[][] generateGrid(Random r) {
     Boolean[][] soln = new Boolean[5][5];
@@ -35,29 +35,29 @@ public class CellTest {
   @Before
   public void setUp() {
     // System.out.println(Arrays.deepToString(generateGrid(new Random())));
-    twoPawn = new Pawns(2, Player.PLAYER2);
-    threePawn = new Pawns(3, Player.PLAYER1);
+    twoPawn = new Pawns(2, Turn.PLAYER2);
+    threePawn = new Pawns(3, Turn.PLAYER1);
   }
 
-  /** Tests construction of objects in the classes Card and Cell. */
+  /** Tests construction of objects in the classes Unit and Cell. */
   @Test
   public void testConstruction() {
     // Testing with illegal inputs.
-    assertThrows(IllegalArgumentException.class, () -> new Pawns(-1, Player.PLAYER1));
-    assertThrows(IllegalArgumentException.class, () -> new Pawns(4, Player.PLAYER2));
+    assertThrows(IllegalArgumentException.class, () -> new Pawns(-1, Turn.PLAYER1));
+    assertThrows(IllegalArgumentException.class, () -> new Pawns(4, Turn.PLAYER2));
     assertThrows(IllegalArgumentException.class, () -> new Pawns(2, null));
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Card("Cavalry", -1, 1, generateGrid(testRand), Player.PLAYER1));
+        () -> new Unit("Cavalry", -1, 1, generateGrid(testRand), Turn.PLAYER1));
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Card("Cavalry", 4, 1, generateGrid(testRand), Player.PLAYER1));
+        () -> new Unit("Cavalry", 4, 1, generateGrid(testRand), Turn.PLAYER1));
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Card("Cavalry", 1, 4, generateGrid(testRand), Player.PLAYER1));
+        () -> new Unit("Cavalry", 1, 4, generateGrid(testRand), Turn.PLAYER1));
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Card("Cavalry", 1, -1, generateGrid(testRand), Player.PLAYER1));
+        () -> new Unit("Cavalry", 1, -1, generateGrid(testRand), Turn.PLAYER1));
   }
 
   /** Tests the method AddPawn() in the interface Cell. */
@@ -67,33 +67,33 @@ public class CellTest {
     // USING ADDAWN ON PAWNS
     // Testing that pawns get added correctly
     assertEquals(2, twoPawn.getPawns());
-    twoPawn.addPawn(Player.PLAYER2);
+    twoPawn.addPawn(Turn.PLAYER2);
     assertEquals(3, twoPawn.getPawns());
     // Adding pawns past the limit (3) will add no pawns
-    twoPawn.addPawn(Player.PLAYER2);
+    twoPawn.addPawn(Turn.PLAYER2);
     assertEquals(3, twoPawn.getPawns());
     // Adding pawns from a different player will change the player, not the pawn count
     assertEquals(1, onePawn.getPawns());
-    assertEquals(Player.PLAYER1, onePawn.getAffiliation());
-    onePawn.addPawn(Player.PLAYER2);
+    assertEquals(Turn.PLAYER1, onePawn.getAffiliation());
+    onePawn.addPawn(Turn.PLAYER2);
     assertEquals(1, onePawn.getPawns());
-    assertEquals(Player.PLAYER2, onePawn.getAffiliation());
+    assertEquals(Turn.PLAYER2, onePawn.getAffiliation());
     // Giving a null player gives an exception
     assertThrows(IllegalArgumentException.class, () -> onePawn.addPawn(null));
     // Adding pawns on an empty space will set its affiliation and pawn count
     assertEquals(0, emptySpace.getPawns());
     assertNull(emptySpace.getAffiliation());
-    emptySpace.addPawn(Player.PLAYER2);
+    emptySpace.addPawn(Turn.PLAYER2);
     assertEquals(1, emptySpace.getPawns());
-    assertEquals(Player.PLAYER2, emptySpace.getAffiliation());
+    assertEquals(Turn.PLAYER2, emptySpace.getAffiliation());
 
     // USING ADDPAWN ON CARDS
     // addPawn does nothing to cards. it doesn't even change it's affiliation!
     assertEquals(card1, card2);
-    assertEquals(Player.PLAYER1, card1.getAffiliation());
-    card1.addPawn(Player.PLAYER2);
+    assertEquals(Turn.PLAYER1, card1.getAffiliation());
+    card1.addPawn(Turn.PLAYER2);
     assertEquals(card1, card2);
-    assertEquals(Player.PLAYER1, card1.getAffiliation());
+    assertEquals(Turn.PLAYER1, card1.getAffiliation());
   }
 
   /** Tests the method Equals() in the interface Cell. */
@@ -101,28 +101,28 @@ public class CellTest {
   public void testEquals() {
     // These cards have the same name, cost, value, influence grid, and player.
     // They are the same!
-    card1 = new Card("Cavalry", 1, 1, cavalryGrid.clone(), Player.PLAYER1);
-    card2 = new Card("Cavalry", 1, 1, cavalryGrid.clone(), Player.PLAYER1);
+    card1 = new Unit("Cavalry", 1, 1, cavalryGrid.clone(), Turn.PLAYER1);
+    card2 = new Unit("Cavalry", 1, 1, cavalryGrid.clone(), Turn.PLAYER1);
     assertEquals(card1, card2);
     // Differing name
-    Card card3 = new Card("Wasp", 1, 2, cavalryGrid.clone(), Player.PLAYER1);
-    Card card4 = new Card("Bee", 1, 2, cavalryGrid.clone(), Player.PLAYER1);
+    Unit card3 = new Unit("Wasp", 1, 2, cavalryGrid.clone(), Turn.PLAYER1);
+    Unit card4 = new Unit("Bee", 1, 2, cavalryGrid.clone(), Turn.PLAYER1);
     assertNotEquals(card3, card4);
     // Differing cost
-    Card card5 = new Card("Bee", 2, 2, cavalryGrid.clone(), Player.PLAYER1);
-    Card card6 = new Card("Bee", 1, 2, cavalryGrid.clone(), Player.PLAYER1);
+    Unit card5 = new Unit("Bee", 2, 2, cavalryGrid.clone(), Turn.PLAYER1);
+    Unit card6 = new Unit("Bee", 1, 2, cavalryGrid.clone(), Turn.PLAYER1);
     assertNotEquals(card5, card6);
     // Differing value
-    Card card7 = new Card("Bee", 1, 1, cavalryGrid.clone(), Player.PLAYER1);
-    Card card8 = new Card("Bee", 1, 2, cavalryGrid.clone(), Player.PLAYER1);
+    Unit card7 = new Unit("Bee", 1, 1, cavalryGrid.clone(), Turn.PLAYER1);
+    Unit card8 = new Unit("Bee", 1, 2, cavalryGrid.clone(), Turn.PLAYER1);
     assertNotEquals(card7, card8);
     // Differing influence grid
-    Card card9 = new Card("Bee", 2, 2, cavalryGrid.clone(), Player.PLAYER1);
-    Card card10 = new Card("Bee", 1, 2, generateGrid(new Random(3)), Player.PLAYER1);
+    Unit card9 = new Unit("Bee", 2, 2, cavalryGrid.clone(), Turn.PLAYER1);
+    Unit card10 = new Unit("Bee", 1, 2, generateGrid(new Random(3)), Turn.PLAYER1);
     assertNotEquals(card9, card10);
     // Differing affiliation
-    Card card11 = new Card("Bee", 1, 2, cavalryGrid.clone(), Player.PLAYER2);
-    Card card12 = new Card("Bee", 1, 2, cavalryGrid.clone(), Player.PLAYER1);
+    Unit card11 = new Unit("Bee", 1, 2, cavalryGrid.clone(), Turn.PLAYER2);
+    Unit card12 = new Unit("Bee", 1, 2, cavalryGrid.clone(), Turn.PLAYER1);
     assertNotEquals(card11, card12);
   }
 }

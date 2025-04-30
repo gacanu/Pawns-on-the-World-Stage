@@ -6,16 +6,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import cs3500.pawns.model.DeckReader;
-import cs3500.pawns.model.Player;
+import cs3500.pawns.controller.DeckReader;
+import cs3500.pawns.model.Turn;
 import cs3500.pawns.model.QueensBlood;
-import cs3500.pawns.view.QueensBloodView;
 import cs3500.pawns.view.QueensBloodTextualView;
 
 /** allows the QueensBlood game to be played. */
 public class PawnsBoard {
   /**
-   * public main method for the Poker Game.
+   * public main method for the QueensBlood Game.
    *
    * @param args the additional args to the main method
    */
@@ -25,17 +24,20 @@ public class PawnsBoard {
     QueensBlood model = new QueensBlood(5, 3, new Random());
     Path path = Paths.get("docs" + File.separator + "deck.config");
     model.startGame(
-        DeckReader.readFile(Player.PLAYER1, path),
-        DeckReader.readFile(Player.PLAYER2, path),
-        5,
-        false);
-    QueensBloodView view = new QueensBloodTextualView(model);
+        DeckReader.readFile(Turn.PLAYER1, path), DeckReader.readFile(Turn.PLAYER2, path), 5, false);
+    QueensBloodTextualView view = new QueensBloodTextualView(model, out);
     // QueensBloodTextualController controller = new QueensBloodTextualController(in, out);
     // controller.playGame(model, view, true, 5);
     playDemo(model, view);
   }
 
-  private static void playDemo(QueensBlood model, QueensBloodView view) {
+  /**
+   * plays the demo game.
+   *
+   * @param model the given QueensBlood model
+   * @param view the given QueensBloodTextualView
+   */
+  private static void playDemo(QueensBlood model, QueensBloodTextualView view) {
     model.placeCardInPosition(0, 0, 0); // And so begins the slog //red
     System.out.println(view);
     model.placeCardInPosition(0, 4, 0);
@@ -71,6 +73,4 @@ public class PawnsBoard {
     model.passTurn();
     System.out.println(view); // Game over!
   }
-
-
 }

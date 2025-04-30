@@ -1,14 +1,15 @@
 package cs3500.pawns.view;
 
 import cs3500.pawns.model.Card;
-import cs3500.pawns.model.DeckReader;
-import cs3500.pawns.model.Player;
+import cs3500.pawns.controller.DeckReader;
+import cs3500.pawns.model.PawnsBoardModel;
+import cs3500.pawns.model.Turn;
 import cs3500.pawns.model.QueensBlood;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.CharBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,18 +19,17 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-/**
- * tests the methods in QueensBloosTextualView.
- */
+/** tests the methods in QueensBloodTextualView. */
 public class QueensBloodTextualViewTest {
+  Appendable out = new StringBuilder();
   Random r = new Random(1);
-  QueensBlood qbWide = new QueensBlood(5, 3, r);
-  QueensBloodTextualView qbWideView = new QueensBloodTextualView(qbWide);
-  QueensBlood qbTall = new QueensBlood(3, 5, r);
-  QueensBloodTextualView qbTallView = new QueensBloodTextualView(qbTall);
+  PawnsBoardModel qbWide = new QueensBlood(5, 3, r);
+  QueensBloodView qbWideView = new QueensBloodTextualView(qbWide, out);
+  PawnsBoardModel qbTall = new QueensBlood(3, 5, r);
+  QueensBloodView qbTallView = new QueensBloodTextualView(qbTall, out);
   Path path = Paths.get("docs/deck.config");
-  List<Card> deck1 = DeckReader.readFile(Player.PLAYER1, path);
-  List<Card> deck2 = DeckReader.readFile(Player.PLAYER2, path);
+  List<Card> deck1 = DeckReader.readFile(Turn.PLAYER1, path);
+  List<Card> deck2 = DeckReader.readFile(Turn.PLAYER2, path);
 
   @Before
   public void setUp() {
@@ -37,8 +37,8 @@ public class QueensBloodTextualViewTest {
     qbTall = new QueensBlood(3, 5, r);
     qbWide.startGame(new ArrayList<>(deck1), new ArrayList<>(deck2), 5, false);
     qbTall.startGame(new ArrayList<>(deck1), new ArrayList<>(deck2), 5, false);
-    qbWideView = new QueensBloodTextualView(qbWide);
-    qbTallView = new QueensBloodTextualView(qbTall);
+    qbWideView = new QueensBloodTextualView(qbWide, out);
+    qbTallView = new QueensBloodTextualView(qbTall, out);
   }
 
   /**
@@ -53,10 +53,6 @@ public class QueensBloodTextualViewTest {
       /**
        * Appends the specified character sequence to this {@code Appendable}.
        *
-       * <p>Depending on which class implements the character sequence {@code csq}, the entire
-       * sequence may not be appended. For instance, if {@code csq} is a {@link CharBuffer} then the
-       * subsequence to append is defined by the buffer's position and limit.
-       *
        * @param csq The character sequence to append. If {@code csq} is {@code null}, then the four
        *     characters {@code "null"} are appended to this Appendable.
        * @return A reference to this {@code Appendable}
@@ -69,12 +65,6 @@ public class QueensBloodTextualViewTest {
 
       /**
        * Appends a subsequence of the specified character sequence to this {@code Appendable}.
-       *
-       * <p>An invocation of this method of the form {@code out.append(csq, start, end)} when {@code
-       * csq} is not {@code null}, behaves in exactly the same way as the invocation
-       *
-       * <pre>
-       *     out.append(csq.subSequence(start, end)) </pre>
        *
        * @param csq The character sequence from which a subsequence will be appended. If {@code csq}
        *     is {@code null}, then characters will be appended as if {@code csq} contained the four
@@ -103,11 +93,13 @@ public class QueensBloodTextualViewTest {
 
     FailingAppendable fail = new FailingAppendable();
     Appendable out = new StringBuilder();
+    qbWideView = new QueensBloodTextualView(qbWide, out);
     qbWide.placeCardInPosition(0, 0, 0);
-    qbWideView.render(out);
+    qbWideView.display();
     assertEquals("1 R1__1 0\n" + "0 1___1 0\n" + "0 1___1 0\n", out.toString());
-    // Testing that render can throw an IOException.
-    assertThrows(IOException.class, () -> qbWideView.render(fail));
+    // Testing that render can throw an IllegalStateException from the failing appendable.
+    qbWideView = new QueensBloodTextualView(qbWide, fail);
+    assertThrows(IllegalStateException.class, () -> qbWideView.display());
   }
 
   /** test the method to string in the QueensBloodTextualViewTest. */
@@ -124,7 +116,6 @@ public class QueensBloodTextualViewTest {
 
     assertEquals("1 R1_1B 1\n" + "2 R1__1 0\n" + "0 2___1 0\n", qbWideView.toString());
     assertEquals(
-        "0 1_1 0\n" + "0 1_1 0\n"
-                + "0 1_1 0\n" + "0 1_1 0\n" + "0 1_1 0\n", qbTallView.toString());
+        "0 1_1 0\n" + "0 1_1 0\n" + "0 1_1 0\n" + "0 1_1 0\n" + "0 1_1 0\n", qbTallView.toString());
   }
 }

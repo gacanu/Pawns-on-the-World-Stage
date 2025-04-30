@@ -1,15 +1,29 @@
 package cs3500.pawns.view;
 
-import java.io.IOException;
-
 /** Interface for a view for the Queens Blood game. */
 public interface QueensBloodView {
 
   /**
-   * Renders a model in some manner (e.g. as text, or as graphics, etc.) to the given appendable.
+   * Adds the given ViewFeatures to the current view. This allows the view to communicate with the
+   * controller, which implements ViewFeatures.
    *
-   * @param out where to send the model information to
-   * @throws IOException if the rendering fails for some reason
+   * @param f the ViewFeatures object to add
    */
-  void render(Appendable out) throws IOException;
+  void addFeature(ViewFeatures f);
+
+  /** Displays the current view. */
+  void display();
+
+  /** updates the panel. */
+  void update();
+
+  /**
+   * shows the dialog.
+   *
+   * @param s the string to show.
+   */
+  void showDialog(String s);
+
+  /** clears the selections. */
+  void clearSelections();
 }

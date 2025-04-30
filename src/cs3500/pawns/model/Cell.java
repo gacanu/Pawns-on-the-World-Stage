@@ -29,7 +29,7 @@ public interface Cell {
    *
    * @throws IllegalArgumentException if this is a card.
    */
-  void addPawn(Player affiliation);
+  void addPawn(Turn affiliation);
 
   /**
    * Returns the value at this position. Pawns have no value and return 0.
@@ -38,5 +38,17 @@ public interface Cell {
    */
   int getValue();
 
-  Player getAffiliation();
+  /**
+   * Returns the affiliation of this Cell.
+   *
+   * @return the affiliation of this Cell.
+   */
+  Turn getAffiliation();
+
+  /**
+   * Duplicates this cell object, without aliasing it.
+   *
+   * @return a copy of this cell object.
+   */
+  Cell dupe();
 }

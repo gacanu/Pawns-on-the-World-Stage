@@ -4,22 +4,22 @@ Overview
     - This element can have a value, cost, and affiliation, and can have pawns/cards placed on them.
     - Cards and Pawns are both Cell types.
 - Card
-    - Represents a Card with a name, cost, value, influence grid, and Player affiliation.
+    - Represents a Card with a name, cost, value, influence grid, and Turn affiliation.
     - Can act as both a member of a deck as a Card, or an element of the game board as a Cell.
     KEY COMPONENT:
-    - Influence: A 5x5 2D boolean array, representing the cloud of influence around this card.
+    - Influence: A 5x5 2D boolean array, representing the cloud of influence around this providerCard.
 - Pawns
-    - Represents a certain number of pawns with a Player affiliation on the board.
+    - Represents a certain number of pawns with a Turn affiliation on the board.
     - Blank board spaces are not null, but instead a Pawn with a null affiliation and zero pawns.
-- Player
+- Turn
     - One of PLAYER1 or PLAYER2. PLAYER1 has the color value red, while PLAYER2 has the color value blue.
-    - In cells, this represents the person who placed the card or who controls the given group of pawns.
-    - In QueensBlood, this is used to represent which player's turn it currently is.
-    - In DeckReader, this is used to assign the read cards to the given player.
+    - In cells, this represents the person who placed the providerCard or who controls the given group of pawns.
+    - In QueensBlood, this is used to represent which providerPlayer's turn it currently is.
+    - In DeckReader, this is used to assign the read cards to the given providerPlayer.
 - DeckReader
     - A class with one static method, readFile(), that reads a deck from the given file path and returns the deck.
     - By default, playing a game with a normal controller should load the deck.config file currently in 'docs/deck.config'.
-    - The affiliation of the cards in the returned deck depends on the player given in the method declaration.
+    - The affiliation of the cards in the returned deck depends on the providerPlayer given in the method declaration.
 - QueensBlood
     - Represents a game of QueensBlood.
     - Swaps between two players and has a whole host of methods that facilitate placing cards, passing, etc.
@@ -35,7 +35,7 @@ Overview
     2 R1_1B 2
     2 R_1_2 0
     - Where 'R' and 'B' are placed cards, numbers on the board are pawns, and '_' are empty spots.
-    - The numbers on the side represent each player's scores.
+    - The numbers on the side represent each providerPlayer's scores.
 - QueensBloodTextualController
     - A basic textual controller, used for testing. Can play and pass.
 
@@ -61,18 +61,115 @@ DeckReader will throw an IllegalArgumentException if:
 
 Instantiating user-players
 User-Players would likely be an interface similar to a controller, with methods like Place() and
-Pass(), alongside methods that allow the player to see the view, also with some event listeners in
-the Computer Controlled Player that force it to take a turn (for example). So, the structure
+Pass(), alongside methods that allow the providerPlayer to see the view, also with some event listeners in
+the Computer Controlled Turn that force it to take a turn (for example). So, the structure
 would probably something similar to this:
 
- - Player (Interface)
+ - Turn (Interface)
      - UserPlayer (Class - represents a person playing)
      - CPUPlayer (Class - represents a computer playing)
 
-The Computer Controlled Player would likely be designed so that it has a list of priorities, which
+The Computer Controlled Turn would likely be designed so that it has a list of priorities, which
 check in a row and perform some function if a condition is met. It would probably look something
 like this:
-- Try to place the highest value card the furthest forward on the board. If it is one cheaper than
+- Try to place the highest value providerCard the furthest forward on the board. If it is one cheaper than
         the current spot, try to find another eligible one.
-- If no spots are eligible, try the next highest value card in the hand.
+- If no spots are eligible, try the next highest value providerCard in the hand.
 - If nothing can be placed, pass the turn.
+
+///// PART 2 //////
+
+Big Differences from the previous assignment:
+- Decoupled QueensBlood, Card (now named Unit), and QueensBloodTextualView by adding the interfaces PawnsBoardModel, Card, QueensBloodView which they inherit.
+    - This allows them to exist with other class implementations in preparation for the final assignment
+    - This used to force functionality to be implementation specific, but now allows for multiple concrete implementations under the same interface umbrella
+- QueensBloodTextualView now inherits the same type as the QueensBloodGUIView, which means it needs an appendable in its constructor
+    - QueensBloodTextualView is still a view, and it should function as one. This just made sense.
+- Added new methods to PawnsBoardModel/ReadonlyPawnsBoardModel
+    - Some were simply mandated by the assignment, others are used for testing the strategies.
+- Added a method in Turn that simply gets the other providerPlayer (i.e. PLAYER1.getOther() == PLAYER2)
+    - This reduces duplicate code and looks better.
+- Tests were also decoupled, now using the interfaces instead of being dependent on the concrete classes.
+
+Key Commands for the View:
+- Pass turn with backspace, and confirm view with enter.
+NOTE: This has been changed! The controls are now:
+- Pass turn with P, confirm with M.
+
+Extra Credit:
+- We didn't have time for extra credit, you don't have to look.
+
+Note:
+- The move implementation probably merits some explanation - it functions as a macro, or a representation of a command which can be ran with the method execute(model), which calls the current object on the given model.
+
+//// PART 3 /////
+
+Big Differences from the previous assignment:
+- The view can only use one final Turn object, specified upon construction instead of dynamically displaying whatever the model's current turn is
+    - This means that only one hand is displayed at a time in the view
+- PawnsBoard now has a method, addNotified(), which allows it to take in objects it notifies when the turn changes
+- QueensBloodController new extends the Notifiable interface, as to notify controllers upon the changing of turns
+- checkPosition() in QueensBlood previously didn't check much of what it was supposed to, for some reason. This is now fixed.
+
+Command-Line Arguments - Only 4 are allowed. Any other amount causes an error to be thrown.
+- First argument: File path to Red's deck
+- Second argument: File path to Blue's deck
+- Third argument: Describes a providerPlayer/strategy for the red providerPlayer (one of "human", "fillfirst", "maxrowscore")
+- Fourth argument: Describes a providerPlayer/strategy for the red providerPlayer (one of "human", "fillfirst", "maxrowscore")
+If an invalid path is given for the first or second argument, the default docs/deck.config is used and no error is thrown.
+If an invalid strategy is given for the third or fourth argument, a human controller/providerPlayer is used and no error is thrown.
+
+//// PART 4 ////
+
+Big Differences:
+- To fix some problems using Backspace as our pass key on Macs, the controls have been changed:
+    - P is now the key for pass
+    - M is now the key for confirm
+- Passing has now been fixed for Mac users.
+- Ending the game with a tie no longer crashes it (this was caused by the game returning a null winner, which the end of game text didn't account for).
+- Running the game with two CPU Players now no longer endlessly shows dialogues, instead showing only two then the end game state in each view.
+
+
+Changes made to Provider Code:
+- Style fixes.
+- Given the similarities in naming the provider's code and our code, we have chosen to rename the given provider code classes
+  to avoid naming similarities and errors down the line. Classes whose names were similar to provider code were renamed by adding
+  'Provider' as a prefix.
+    - Ex. Card -> ProviderCard
+  - Classes changed this way include:
+    - Provider Controller:
+        - ProviderMove
+    - Provider Model:
+        - ProviderCard
+        - ProviderCell
+        - ProviderIPawnsBoard
+        - ProviderPlayer
+        - ProviderReadonlyPawnsBoard
+No implementation or interface details in the Provider Code has been changed otherwise.
+
+
+Features we were able to get working on their view:
+- Showing the current game state on the board, including pawns, cards and the score on the left and right
+- The controller can select and play elements on the board, and send messages to the player
+- The game can end, with a message saying it does so
+- The game can handle errors, with a message telling the player what went wrong
+Features we were unable to get working:
+- Their view, for some reason, cannot display the selected card or hand. I believe this has something to do with how their model handles
+selected cards instead of their controller/view (like our setup), but I was unable to get this working despite numerous attempts and seeing
+that their view properly reads from our model when selecting a tile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,7 @@
 package cs3500.pawns.model;
 
+import cs3500.pawns.controller.DeckReader;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,11 +24,11 @@ public class QueensBloodTest {
   Boolean[][] gridBoard;
   List<Card> deck1;
   List<Card> deck2;
-  QueensBlood qb1;
-  QueensBlood qbWide;
-  QueensBlood qbSmall;
-  QueensBlood qb2;
-  QueensBlood qb3;
+  PawnsBoardModel qb1;
+  PawnsBoardModel qbWide;
+  PawnsBoardModel qbSmall;
+  PawnsBoardModel qb2;
+  PawnsBoardModel qb3;
   Path path;
   Boolean[][] arr = {
     {false, false, false, false, false},
@@ -35,7 +37,7 @@ public class QueensBloodTest {
     {false, false, false, false, false},
     {false, false, false, false, false}
   };
-  Card bee = new Card("Bee", 1, 1, arr, Player.PLAYER1);
+  Card bee = new Unit("Bee", 1, 1, arr, Turn.PLAYER1);
 
   private Boolean[][] generateGrid(Random r) {
     Boolean[][] soln = new Boolean[5][5];
@@ -58,12 +60,12 @@ public class QueensBloodTest {
     qb3 = new QueensBlood(15, 25, this.r);
     gridBoard = generateGrid(r);
     path = Paths.get("docs" + File.separator + "deck.config");
-    deck1 = DeckReader.readFile(Player.PLAYER1, path);
-    deck2 = DeckReader.readFile(Player.PLAYER2, path);
+    deck1 = DeckReader.readFile(Turn.PLAYER1, path);
+    deck2 = DeckReader.readFile(Turn.PLAYER2, path);
     qbWide.startGame(new ArrayList<>(deck1), new ArrayList<>(deck2), 5, false);
     qb1.startGame(new ArrayList<>(deck1), new ArrayList<>(deck2), 2, false);
-    deck1 = DeckReader.readFile(Player.PLAYER1, path);
-    deck2 = DeckReader.readFile(Player.PLAYER2, path);
+    deck1 = DeckReader.readFile(Turn.PLAYER1, path);
+    deck2 = DeckReader.readFile(Turn.PLAYER2, path);
   }
 
   /** Tests valid construction of QueensBlood objects. */
@@ -100,14 +102,14 @@ public class QueensBloodTest {
   /** Tests the method passTurn(). */
   @Test
   public void passTurn() {
-    assertEquals(Player.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER2, qb1.getTurn());
+    assertEquals(Turn.PLAYER2, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER1, qb1.getTurn());
-    assertEquals(Player.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER2, qb1.getTurn());
+    assertEquals(Turn.PLAYER2, qb1.getTurn());
   }
 
   /** Tests the method startGame(). */
@@ -160,7 +162,7 @@ public class QueensBloodTest {
     // If there's not enough pawns in that position to place this card
     assertThrows(IllegalArgumentException.class, () -> qbWide.placeCardInPosition(0, 1, 0));
     // Shows that the board can properly update before and after a card gets placed.
-    assertEquals(new Pawns(1, Player.PLAYER1), qb1.getCell(0, 0));
+    assertEquals(new Pawns(1, Turn.PLAYER1), qb1.getCell(0, 0));
     qb1.placeCardInPosition(0, 0, 0);
     assertEquals(bee, qb1.getCell(0, 0));
     // Shows that influence changes before and after a card gets placed.
@@ -171,7 +173,7 @@ public class QueensBloodTest {
     qbWide.placeCardInPosition(0, 0, 2);
     qbWide.passTurn();
     assertEquals(bee, qbWide.getCell(0, 2));
-    assertEquals(new Pawns(1, Player.PLAYER1), qbWide.getCell(1, 2));
+    assertEquals(new Pawns(1, Turn.PLAYER1), qbWide.getCell(1, 2));
     qbWide.placeCardInPosition(0, 1, 2);
   }
 
@@ -200,31 +202,31 @@ public class QueensBloodTest {
   /** Tests the method getScores(). */
   @Test
   public void getScores() { // :( yellow lines >:-(
-    assertThrows(IllegalStateException.class, () -> qbSmall.getScores(Player.PLAYER1));
+    assertThrows(IllegalStateException.class, () -> qbSmall.getScores(Turn.PLAYER1));
     assertThrows(IllegalArgumentException.class, () -> qb1.getScores(null));
     Integer[] zeroes = {0, 0, 0, 0, 0};
 
-    assertEquals(Arrays.toString(zeroes), Arrays.toString(qb1.getScores(Player.PLAYER1)));
-    assertEquals(Arrays.toString(zeroes), Arrays.toString(qb1.getScores(Player.PLAYER2)));
+    assertEquals(Arrays.toString(zeroes), Arrays.toString(qb1.getScores(Turn.PLAYER1)));
+    assertEquals(Arrays.toString(zeroes), Arrays.toString(qb1.getScores(Turn.PLAYER2)));
   }
 
   /** Tests the method getTurn(). */
   @Test
   public void getTurn() {
-    assertEquals(Player.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER2, qb1.getTurn());
+    assertEquals(Turn.PLAYER2, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER1, qb1.getTurn());
-    assertEquals(Player.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
+    assertEquals(Turn.PLAYER1, qb1.getTurn());
     qb1.passTurn();
-    assertEquals(Player.PLAYER2, qb1.getTurn());
+    assertEquals(Turn.PLAYER2, qb1.getTurn());
   }
 
   /** Tests the method getTotalScore(). */
   @Test
   public void getTotalScore() {
-    assertEquals(0, qb1.getTotalScore(Player.PLAYER1));
-    assertEquals(0, qb1.getTotalScore(Player.PLAYER2));
+    assertEquals(0, qb1.getTotalScore(Turn.PLAYER1));
+    assertEquals(0, qb1.getTotalScore(Turn.PLAYER2));
   }
 }

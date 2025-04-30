@@ -1,0 +1,8 @@
+Code Critique:
+The interfaces given were overall well designed, and aside from a few odd design decisions (like using a map, integers to integers, representing the score),
+most of the designs were capable of working within many given views, controllers, etc. The only major issue I could find was that the model
+handled selected cards and hand indices, as this is ties the model to visual representation and idea of a GUI. The selected cards,
+in my opinion, are a detail of player interaction and do not describe the state of the game, and should be kept within the controller and view rather
+than the model. Although I couldn't get it fully working, their view was well made and visually represented the game state simply and effectively.
+We needed to reach out to the providers once to receive a more updated version of their code (to hopefully fix the selection bug), although it
+turned out to be a deeper-running problem that couldn't be solved by simply importing some updated code.

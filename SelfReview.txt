@@ -1,0 +1,6 @@
+I wish I had put more thought into the creation of my controller interfaces and how they tied in to the view/model,
+as that feels like by far the weakest element of our design. The Human/CPUController hybrid is not very clear in how it works,
+and the relationship with each to its player is muddy at best. This was clearly illustrated in comparison to the provider's
+controller interface, which seems more cohesive and well-thought-out.
+We didn't have much experience with our providers, simply asking for a few bits of code and getting it rather quickly.
+Despite our limited interaction, they were rather courteous and helpful throughout the process.

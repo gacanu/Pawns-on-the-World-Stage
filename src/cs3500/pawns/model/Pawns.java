@@ -8,7 +8,7 @@ import static java.lang.String.valueOf;
 public class Pawns implements Cell {
   private int count;
   // INVARIANT: This is a natural
-  private Player player;
+  private Turn player;
 
   /**
    * a constructor to represent a pawn.
@@ -16,7 +16,7 @@ public class Pawns implements Cell {
    * @param count the count of pawns.
    * @param player the player impacted by these pawns.
    */
-  public Pawns(int count, Player player) {
+  public Pawns(int count, Turn player) {
     if (count < 0 || count > 3) {
       throw new IllegalArgumentException("Cannot have less than 0 or greater than 3 pawns!");
     }
@@ -41,8 +41,18 @@ public class Pawns implements Cell {
    * @return the affiliation of this Cell.
    */
   @Override
-  public Player getAffiliation() {
+  public Turn getAffiliation() {
     return this.player;
+  }
+
+  /**
+   * Duplicates this pawns object, without aliasing it.
+   *
+   * @return a copy of this pawns object.
+   */
+  @Override
+  public Cell dupe() {
+    return new Pawns(this.count, this.player);
   }
 
   /**
@@ -74,16 +84,15 @@ public class Pawns implements Cell {
    * @throws IllegalArgumentException if this is a card.
    */
   @Override
-  public void addPawn(Player affiliation) {
+  public void addPawn(Turn affiliation) {
     if (affiliation == null) {
-      throw new IllegalArgumentException("Player cannot be null!");
+      throw new IllegalArgumentException("Turn cannot be null!");
     }
     if ((this.player == affiliation || this.player == null) && this.count < 3) {
       this.count++;
     }
-    this.player =
-        affiliation; // When the player is not the same, the pawns are 'taken over', but none are
-    // added.
+    this.player = affiliation;
+    // When the player is not the same, the pawns are 'taken over', but none are added.
   }
 
   /**
@@ -124,12 +133,13 @@ public class Pawns implements Cell {
 
   /**
    * Returns a string representation of this pawns object.
+   *
    * @return a string representation of this pawns object.
    */
   public String toString() {
     if (this.player == null) {
-      return "Blank";
+      return "";
     }
-    return "P: " + this.count + ", " + this.player.getColor();
+    return "Pawns: " + this.count;
   }
 }
